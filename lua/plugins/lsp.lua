@@ -1,16 +1,71 @@
 return {
+	-- Mason for managing LSP servers
+	{
+		"mason-org/mason.nvim",
+		cmd = "Mason",
+		keys = {
+			{ "<leader>cm", "<cmd>Mason<cr>", desc = "Mason" },
+		},
+		opts = {
+			ensure_installed = {
+				"typescript-language-server",
+				"angular-language-server",
+				"html-lsp",
+				"css-lsp",
+				"eslint-lsp",
+				"prettier",
+			},
+		},
+		config = function(_, opts)
+			require("mason").setup()
+			local mr = require("mason-registry")
+			local function ensure_installed()
+				for _, tool in ipairs(opts.ensure_installed) do
+					local p = mr.get_package(tool)
+					if not p:is_installed() then
+						p:install()
+					end
+				end
+			end
+			if mr.refresh then
+				mr.refresh(ensure_installed)
+			else
+				ensure_installed()
+			end
+		end,
+	},
+	{
+		"mason-org/mason-lspconfig.nvim",
+		dependencies = { "mason-org/mason.nvim" },
+		opts = {
+			ensure_installed = {
+				"ts_ls",
+				"angularls",
+				"html",
+				"cssls",
+				"eslint",
+			},
+		},
+	},
+	-- LSP Configuration
 	{
 		"neovim/nvim-lspconfig",
+		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
 			"mason-org/mason.nvim",
 			"mason-org/mason-lspconfig.nvim",
-			"hrsh7th/cmp-nvim-lsp",
 			"hrsh7th/nvim-cmp",
 		},
-		event = { "BufReadPre", "BufNewFile" },
 		config = function()
+			-- Only require cmp_nvim_lsp if cmp is loaded
+			local cmp_nvim_lsp_ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+
+			if cmp_nvim_lsp_ok then
+				capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
+			end
+
 			local lspconfig = require("lspconfig")
-			local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
 			-- LSP keymaps
 			local on_attach = function(client, bufnr)
@@ -33,9 +88,6 @@ return {
 					vim.lsp.buf.format({ async = true })
 				end, opts)
 			end
-
-			-- Enhanced capabilities for autocompletion
-			local capabilities = cmp_nvim_lsp.default_capabilities()
 
 			-- TypeScript/JavaScript Language Server (for Angular)
 			lspconfig.ts_ls.setup({
@@ -139,51 +191,5 @@ return {
 				border = "rounded",
 			})
 		end,
-	},
-	{
-		"mason-org/mason.nvim",
-		cmd = "Mason",
-		keys = {
-			{ "<leader>cm", "<cmd>Mason<cr>", desc = "Mason" },
-		},
-		opts = {
-			ensure_installed = {
-				"typescript-language-server",
-				"angular-language-server",
-				"html-lsp",
-				"css-lsp",
-				"eslint-lsp",
-				"prettier",
-			},
-		},
-		config = function(_, opts)
-			require("mason").setup()
-			local mr = require("mason-registry")
-			local function ensure_installed()
-				for _, tool in ipairs(opts.ensure_installed) do
-					local p = mr.get_package(tool)
-					if not p:is_installed() then
-						p:install()
-					end
-				end
-			end
-			if mr.refresh then
-				mr.refresh(ensure_installed)
-			else
-				ensure_installed()
-			end
-		end,
-	},
-	{
-		"mason-org/mason-lspconfig.nvim",
-		opts = {
-			ensure_installed = {
-				"ts_ls",
-				"angularls",
-				"html",
-				"cssls",
-				"eslint",
-			},
-		},
 	},
 }

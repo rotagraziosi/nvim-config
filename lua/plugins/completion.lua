@@ -11,12 +11,12 @@ return {
       "saadparwaiz1/cmp_luasnip",
       "rafamadriz/friendly-snippets",
     },
-    opts = function()
+    config = function()
       local cmp = require("cmp")
       local luasnip = require("luasnip")
       require("luasnip.loaders.from_vscode").lazy_load()
 
-      return {
+      cmp.setup({
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)
@@ -72,7 +72,7 @@ return {
             hl_group = "LspCodeLens",
           },
         },
-      }
+      })
     end,
   },
 }
