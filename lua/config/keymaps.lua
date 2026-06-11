@@ -6,3 +6,14 @@ vim.keymap.set("n", "<leader>tf", builtin.find_files, { desc = "Telescope find f
 vim.keymap.set("n", "<leader>tg", builtin.live_grep, { desc = "Telescope live grep" })
 vim.keymap.set("n", "<leader>tb", builtin.buffers, { desc = "Telescope buffers" })
 vim.keymap.set("n", "<leader>th", builtin.help_tags, { desc = "Telescope help tags" })
+
+-- Angular terminal at project root (for ng generate commands)
+vim.keymap.set("n", "<leader>ng", function()
+  local root = vim.fs.root(0, { "angular.json", "nx.json" }) or vim.fn.getcwd()
+  Snacks.terminal(nil, { cwd = root })
+end, { desc = "Terminal at Angular project root" })
+
+-- Quickfix navigation (for Overseer build/test error jumping)
+vim.keymap.set("n", "]q", "<cmd>cnext<cr>", { desc = "Next quickfix error" })
+vim.keymap.set("n", "[q", "<cmd>cprev<cr>", { desc = "Prev quickfix error" })
+vim.keymap.set("n", "<leader>qo", "<cmd>copen<cr>", { desc = "Open quickfix list" })
