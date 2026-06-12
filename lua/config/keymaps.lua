@@ -17,3 +17,9 @@ end, { desc = "Terminal at Angular project root" })
 vim.keymap.set("n", "]q", "<cmd>cnext<cr>", { desc = "Next quickfix error" })
 vim.keymap.set("n", "[q", "<cmd>cprev<cr>", { desc = "Prev quickfix error" })
 vim.keymap.set("n", "<leader>qo", "<cmd>copen<cr>", { desc = "Open quickfix list" })
+
+--Moving lines
+vim.keymap.set("n", "<A-j>", ":m +1<CR>==", { desc = "Move line down" })
+vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
+vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
+vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
