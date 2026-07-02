@@ -20,10 +20,7 @@ return {
         end
         local project_ng = new_root_dir .. "/node_modules/@angular/language-server"
         if vim.fn.isdirectory(project_ng) == 1 then
-          local plugins = vim.tbl_get(
-            new_config,
-            "settings", "vtsls", "tsserver", "globalPlugins"
-          ) or {}
+          local plugins = vim.tbl_get(new_config, "settings", "vtsls", "tsserver", "globalPlugins") or {}
           for _, plugin in ipairs(plugins) do
             if plugin.name == "@angular/language-server" then
               plugin.location = project_ng
@@ -43,8 +40,10 @@ return {
           new_config.cmd = {
             ngserver,
             "--stdio",
-            "--tsProbeLocations", project_node_modules,
-            "--ngProbeLocations", project_node_modules,
+            "--tsProbeLocations",
+            project_node_modules,
+            "--ngProbeLocations",
+            project_node_modules,
           }
         end,
       }
@@ -68,6 +67,9 @@ return {
                 client.server_capabilities.signatureHelpProvider = nil
                 client.server_capabilities.codeActionProvider = nil
               end
+            end
+            if client and client.name == "ts_ls" or client.name == "tsserver" then
+              client.server_capabilities.documentFormattingProvider = false
             end
           end,
         })
