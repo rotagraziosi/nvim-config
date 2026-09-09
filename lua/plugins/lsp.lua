@@ -66,6 +66,9 @@ return {
                 client.server_capabilities.hoverProvider = nil
                 client.server_capabilities.signatureHelpProvider = nil
                 client.server_capabilities.codeActionProvider = nil
+                client.server_capabilities.referencesProvider = nil
+                client.server_capabilities.implementationProvider = nil
+                client.server_capabilities.typeDefinitionProvider = nil
               end
             end
             if client and client.name == "ts_ls" or client.name == "tsserver" then
