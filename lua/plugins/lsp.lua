@@ -69,6 +69,12 @@ return {
                 client.server_capabilities.referencesProvider = nil
                 client.server_capabilities.implementationProvider = nil
                 client.server_capabilities.typeDefinitionProvider = nil
+                -- angularls publishes diagnostics much slower than vtsls (which already
+                -- loads the Angular plugin), so its stale copies linger after a fix.
+                vim.diagnostic.enable(false, {
+                  bufnr = args.buf,
+                  ns_id = vim.lsp.diagnostic.get_namespace(client.id),
+                })
               end
             end
             if client and client.name == "ts_ls" or client.name == "tsserver" then
