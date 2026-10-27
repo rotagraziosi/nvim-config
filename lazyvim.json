@@ -2,7 +2,8 @@
   "extras": [
     "lazyvim.plugins.extras.ai.copilot-chat",
     "lazyvim.plugins.extras.editor.harpoon2",
-    "lazyvim.plugins.extras.lang.angular"
+    "lazyvim.plugins.extras.lang.angular",
+    "lazyvim.plugins.extras.linting.eslint"
   ],
   "install_version": 8,
   "news": {

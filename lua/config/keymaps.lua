@@ -24,3 +24,22 @@ vim.keymap.set("n", "<A-j>", ":m +1<CR>==", { desc = "Move line down" })
 vim.keymap.set("n", "<A-k>", ":m .-2<CR>==", { desc = "Move line up" })
 vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" })
 vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
+
+-- Sirius translation
+local function translations_dir()
+  local root = vim.fs.root(0, { "angular.json" }) or vim.fn.getcwd()
+  return vim.fs.normalize(root .. "/../Resources/Translations")
+end
+
+vim.keymap.set("n", "<leader>tr", function()
+  builtin.find_files({ cwd = translations_dir() })
+end, { desc = "Translation files" })
+
+vim.keymap.set("n", "<leader>tR", function()
+  builtin.live_grep({ cwd = translations_dir(), glob_pattern = "translate_*.json" })
+end, { desc = "Grep translations" })
+
+-- Cursor on 'PLANNING.TOOLBAR.TITLE' | translate → show it in every language
+vim.keymap.set("n", "<leader>tk", function()
+  builtin.grep_string({ cwd = translations_dir(), search = vim.fn.expand("<cfile>") })
+end, { desc = "Translation key under cursor" })
