@@ -50,3 +50,10 @@ end, { desc = "Go to 8 file" })
 vim.keymap.set("n", "<leader>9", function()
   harpoon:list():select(9)
 end, { desc = "Go to 9 file" })
+
+-- Undo tree
+
+vim.cmd("packadd nvim.undotree")
+vim.keymap.set("n", "<leader>z", function()
+  require("undotree").open()
+end, { desc = "Undo tree" })
