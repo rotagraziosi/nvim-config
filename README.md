@@ -13,8 +13,6 @@ Like the LazyVim Starter template, installation is basic.
 
 - Make a backup of your current config
 ```
-```
-```
 # required
 mv ~/.config/nvim{,.bak}
 
@@ -37,17 +35,9 @@ git clone https://github.com/rotagraziosi/nvim-config.git ~/.config/nvim
 rm -rf ~/.config/nvim/.git
 ```
 
-```
-```
-```
-```
-
 ### Windows
 
-
 - Make a backup of your current config
-```
-```
 ```
 # required
 Move-Item $env:LOCALAPPDATA\nvim $env:LOCALAPPDATA\nvim.bak
