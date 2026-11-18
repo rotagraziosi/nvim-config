@@ -57,8 +57,12 @@ local function commit_files(picker, item)
   end
   local commit, cwd = item.commit, item.cwd
   -- --root: first commit has no parent; -m --first-parent: merges list their changes too
-  local res = vim.system({ "git", "diff-tree", "-r", "--root", "-m", "--first-parent", "--no-commit-id",
-    "--name-only", commit }, { cwd = cwd }):wait()
+  local res = vim
+    .system(
+      { "git", "diff-tree", "-r", "--root", "-m", "--first-parent", "--no-commit-id", "--name-only", commit },
+      { cwd = cwd }
+    )
+    :wait()
   local items = {}
   for _, path in ipairs(vim.split(vim.trim(res.stdout or ""), "\n", { trimempty = true })) do
     items[#items + 1] = { text = path, file = path, cwd = cwd }
@@ -117,8 +121,11 @@ vim.keymap.set("n", "<leader>gm", function()
   local file = vim.api.nvim_buf_get_name(0)
   local stages = vim.system({ "git", "ls-files", "-u", "--", file }, { cwd = vim.fs.dirname(file) }):wait().stdout or ""
   if not (stages:find("%s2%s") and stages:find("%s3%s")) then
-    vim.notify("No LOCAL/REMOTE stages: file is not in conflict (already staged?).\n"
-      .. ":Git checkout -m % recreates the conflict (drops your edits)", vim.log.levels.WARN)
+    vim.notify(
+      "No LOCAL/REMOTE stages: file is not in conflict (already staged?).\n"
+        .. ":Git checkout -m % recreates the conflict (drops your edits)",
+      vim.log.levels.WARN
+    )
     return
   end
   vim.cmd("only")
@@ -147,3 +154,40 @@ end, { desc = "Grep translations" })
 vim.keymap.set("n", "<leader>tk", function()
   builtin.grep_string({ cwd = translations_dir(), search = vim.fn.expand("<cfile>") })
 end, { desc = "Translation key under cursor" })
+
+-- Angular specific keymapping
+local targets = {
+  ts = { ".ts" },
+  html = { ".html" },
+  style = { ".scss", ".css", ".sass", ".less" },
+  spec = { ".spec.ts" },
+}
+
+local function angular_switch(kind)
+  local file = vim.api.nvim_buf_get_name(0)
+  -- strip ".spec.ts" first, then any single extension
+  local base = (file:gsub("%.spec%.ts$", ""))
+  base = (base:gsub("%.[^./]+$", ""))
+
+  for _, ext in ipairs(targets[kind]) do
+    local candidate = base .. ext
+    if candidate ~= file and vim.fn.filereadable(candidate) == 1 then
+      vim.cmd.edit(vim.fn.fnameescape(candidate))
+      return
+    end
+  end
+  vim.notify("No " .. kind .. " file found for " .. vim.fn.fnamemodify(base, ":t"), vim.log.levels.WARN)
+end
+
+vim.keymap.set("n", "<leader>ac", function()
+  angular_switch("ts")
+end, { desc = "Angular: component (.ts)" })
+vim.keymap.set("n", "<leader>at", function()
+  angular_switch("html")
+end, { desc = "Angular: template (.html)" })
+vim.keymap.set("n", "<leader>as", function()
+  angular_switch("style")
+end, { desc = "Angular: style" })
+vim.keymap.set("n", "<leader>aS", function()
+  angular_switch("spec")
+end, { desc = "Angular: spec" })
